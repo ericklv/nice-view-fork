@@ -10,8 +10,8 @@
 static const struct {
     int8_t x, y;
 } dots[BATTERY_DOTS] = {
-    {12, 49}, {10, 39}, {12, 28}, {19, 20}, {29, 16},
-    {39, 16}, {49, 20}, {56, 28}, {58, 39}, {56, 49},
+    {8, 51}, {6, 39}, {8, 26}, {16, 17}, {28, 12},
+    {40, 12}, {52, 17}, {60, 26}, {62, 39}, {60, 51},
 };
 
 void draw_battery_status(const struct canvas *canvas, const char *letter, uint8_t level) {
@@ -31,6 +31,6 @@ void draw_battery_status(const struct canvas *canvas, const char *letter, uint8_
     char text[4];
     snprintf(text, sizeof(text), "%u", level);
 
-    canvas_text(canvas, 6, 27, 56, &quinquefive_12, LV_TEXT_ALIGN_CENTER, letter);
-    canvas_text(canvas, 6, 41, 56, &quinquefive_8, LV_TEXT_ALIGN_CENTER, text);
+    canvas_text(canvas, 6, 24, 56, &quinquefive_12, LV_TEXT_ALIGN_CENTER, letter);
+    canvas_text(canvas, 6, 40, 56, &quinquefive_12, LV_TEXT_ALIGN_CENTER, text);
 }
