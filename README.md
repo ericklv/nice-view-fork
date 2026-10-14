@@ -1,17 +1,29 @@
 # nice-view-fork
 
-A nice!view status screen for split ZMK keyboards, based on the arc style of the
+A nice!view status screen for split ZMK keyboards, inspired by the arc style (style 2) of the
 [beekeeb Toucan2](https://github.com/beekeeb/zmk-keyboard-toucan2), which is itself a fork of
 [nice-view-gem](https://github.com/M165437/nice-view-gem).
 
-**Central (L)**: battery arc, WPM chart, layer name, output (`USB`/`BLE`/`NULL`) and
-5 Bluetooth profiles.
+The Toucan2 draws on a 144x168 panel. This fork adapts its layout to the 160x68 nice!view used
+in portrait (68x160): one battery arc per half, a 16-column WPM chart instead of 30, the layer
+name in QuinqueFive 12 instead of 18, and the screen drawn on three rotated 68x68 canvases.
 
-**Peripheral (R)**: battery arc and connection to the central (`BLE`/`NULL`). The middle of the
-screen is left free for a mascot.
+| Central (L) | Peripheral (R) |
+|---|---|
+| ![Central](docs/central.gif) | ![Peripheral](docs/peripheral.gif) |
+
+**Central (L)**: battery arc, WPM chart, layer name, output (`USB`/`BLE`/`NULL`) and
+5 Bluetooth profiles. Layer names up to 4 characters use the large font, longer ones the small
+font, truncated to 5.
+
+**Peripheral (R)**: battery arc and connection to the central (`BLE`/`NULL`). Rows 60 to 134 are
+left free for a mascot.
 
 WPM is only shown on the central. Keys from both halves are processed there, so it already
-counts both.
+counts both. ZMK raises a WPM event only when the value changes, and each event adds a column
+to the chart.
+
+Both branches render the same pixels. The GIFs were rendered by the real LVGL on the host.
 
 ## Branches
 
