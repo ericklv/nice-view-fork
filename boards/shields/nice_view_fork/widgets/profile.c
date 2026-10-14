@@ -1,7 +1,7 @@
 #include <zephyr/kernel.h>
 #include "profile.h"
 
-#define PROFILE_X 60
+#define PROFILE_X 59
 #define PROFILE_Y 101
 #define PROFILE_SIZE 8
 #define PROFILE_STEP 10

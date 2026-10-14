@@ -19,7 +19,11 @@ font, truncated to 5.
 **Peripheral (R)**: battery arc and connection to the central (`BLE`/`NULL`). Rows 60 to 134 are
 left free for a mascot.
 
-WPM is only shown on the central. Keys from both halves are processed there, so it already
+The number and dots inside each arc are that half's battery: 10 dots, one per 10 %, filled dots
+are the charge left.
+
+WPM is only shown on the central, as the dot chart: one column per reading, 6 rows for
+0–100 WPM, no number. Keys from both halves are processed there, so it already
 counts both. ZMK raises a WPM event only when the value changes, and each event adds a column
 to the chart.
 
