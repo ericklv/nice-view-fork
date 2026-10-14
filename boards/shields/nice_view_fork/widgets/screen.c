@@ -135,13 +135,34 @@ struct wpm_status_state {
     uint8_t wpm;
 };
 
-static void wpm_status_update_cb(struct wpm_status_state state) {
+// ZMK only raises the WPM event when the value changes, so the chart samples the WPM every
+// second until its history is all zeros again
+static void wpm_sample_cb(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(wpm_sample_work, wpm_sample_cb);
+
+static void wpm_sample_cb(struct k_work *work) {
+    uint8_t wpm = zmk_wpm_get_state();
+    bool active = false;
+
     struct zmk_widget_screen *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         memmove(widget->state.wpm, widget->state.wpm + 1, sizeof(widget->state.wpm) - 1);
-        widget->state.wpm[WPM_HISTORY - 1] = state.wpm;
+        widget->state.wpm[WPM_HISTORY - 1] = wpm;
         draw(widget);
+
+        for (int i = 0; i < WPM_HISTORY; i++) {
+            active |= widget->state.wpm[i] > 0;
+        }
     }
+
+    if (active) {
+        k_work_schedule_for_queue(zmk_display_work_q(), &wpm_sample_work, K_SECONDS(1));
+    }
+}
+
+static void wpm_status_update_cb(struct wpm_status_state state) {
+    // No-op while a sample is already scheduled
+    k_work_schedule_for_queue(zmk_display_work_q(), &wpm_sample_work, K_NO_WAIT);
 }
 
 static struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
