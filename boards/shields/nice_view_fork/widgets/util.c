@@ -12,23 +12,27 @@ void to_uppercase(char *str) {
 void canvas_create(lv_obj_t *parent, canvas_buf_t buf, int index) {
     lv_obj_t *canvas = lv_canvas_create(parent);
     lv_obj_align(canvas, LV_ALIGN_TOP_RIGHT, -CANVAS_TOP(index), 0);
-    lv_canvas_set_buffer(canvas, buf, CANVAS_SIZE, CANVAS_SIZE, CANVAS_COLOR_FORMAT);
+    lv_canvas_set_buffer(canvas, buf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
 }
 
 void canvas_clear(const struct canvas *canvas) {
     lv_canvas_fill_bg(canvas->obj, LVGL_BACKGROUND, LV_OPA_COVER);
 }
 
+// Rotates by hand: lv_canvas_transform() needs a display being refreshed, which there
+// isn't yet when the widgets draw for the first time
 void canvas_rotate(const struct canvas *canvas) {
-    static uint8_t buf_tmp[CANVAS_BUF_SIZE];
-    uint8_t *buf = lv_canvas_get_draw_buf(canvas->obj)->data;
-    memcpy(buf_tmp, buf, CANVAS_BUF_SIZE);
+    static canvas_buf_t buf_tmp;
+    lv_color_t *buf = (lv_color_t *)lv_canvas_get_img(canvas->obj)->data;
+    memcpy(buf_tmp, buf, sizeof(buf_tmp));
 
-    lv_canvas_fill_bg(canvas->obj, LVGL_BACKGROUND, LV_OPA_COVER);
+    for (int y = 0; y < CANVAS_SIZE; y++) {
+        for (int x = 0; x < CANVAS_SIZE; x++) {
+            buf[y * CANVAS_SIZE + x] = buf_tmp[(CANVAS_SIZE - 1 - x) * CANVAS_SIZE + y];
+        }
+    }
 
-    const int32_t stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, CANVAS_COLOR_FORMAT);
-    lv_draw_sw_rotate(buf_tmp, buf, CANVAS_SIZE, CANVAS_SIZE, stride, stride,
-                      LV_DISPLAY_ROTATION_270, CANVAS_COLOR_FORMAT);
+    lv_obj_invalidate(canvas->obj);
 }
 
 static bool is_visible(const struct canvas *canvas, int32_t y, int32_t h) {
@@ -41,14 +45,7 @@ static void draw_rect(const struct canvas *canvas, int32_t x, int32_t y, int32_t
         return;
     }
 
-    lv_layer_t layer;
-    lv_canvas_init_layer(canvas->obj, &layer);
-
-    y -= canvas->top;
-    lv_area_t coords = {x, y, x + w - 1, y + h - 1};
-    lv_draw_rect(&layer, dsc, &coords);
-
-    lv_canvas_finish_layer(canvas->obj, &layer);
+    lv_canvas_draw_rect(canvas->obj, x, y - canvas->top, w, h, dsc);
 }
 
 void canvas_fill_rect(const struct canvas *canvas, int32_t x, int32_t y, int32_t w, int32_t h,
@@ -79,19 +76,11 @@ void canvas_text(const struct canvas *canvas, int32_t x, int32_t y, int32_t w,
         return;
     }
 
-    lv_layer_t layer;
-    lv_canvas_init_layer(canvas->obj, &layer);
-
     lv_draw_label_dsc_t dsc;
     lv_draw_label_dsc_init(&dsc);
     dsc.color = LVGL_FOREGROUND;
     dsc.font = font;
     dsc.align = align;
-    dsc.text = text;
 
-    y -= canvas->top;
-    lv_area_t coords = {x, y, x + w - 1, y + font->line_height};
-    lv_draw_label(&layer, &dsc, &coords);
-
-    lv_canvas_finish_layer(canvas->obj, &layer);
+    lv_canvas_draw_text(canvas->obj, x, y - canvas->top, w, &dsc, text);
 }

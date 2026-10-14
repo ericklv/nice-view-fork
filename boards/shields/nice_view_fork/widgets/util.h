@@ -11,12 +11,8 @@
 #define CANVAS_SIZE 68
 #define CANVAS_COUNT 3
 #define CANVAS_TOP(i) ((i) == CANVAS_COUNT - 1 ? SCREEN_HEIGHT - CANVAS_SIZE : (i) * CANVAS_SIZE)
-#define CANVAS_COLOR_FORMAT LV_COLOR_FORMAT_L8
-#define CANVAS_BUF_SIZE                                                                            \
-    LV_CANVAS_BUF_SIZE(CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_GET_BPP(CANVAS_COLOR_FORMAT),     \
-                       LV_DRAW_BUF_STRIDE_ALIGN)
 
-typedef uint8_t canvas_buf_t[CANVAS_BUF_SIZE];
+typedef lv_color_t canvas_buf_t[CANVAS_SIZE * CANVAS_SIZE];
 
 #define LVGL_BACKGROUND                                                                            \
     (IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? lv_color_white() : lv_color_black())
