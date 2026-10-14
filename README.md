@@ -51,7 +51,7 @@ manifest:
       revision: main
       import: app/west.yml
     - name: nice-view-fork
-      url: <this repository>
+      url: https://github.com/ericklv/nice-view-fork
       revision: main
   self:
     path: config
