@@ -22,10 +22,10 @@ left free for a mascot.
 The number and dots inside each arc are that half's battery: 10 dots, one per 10 %, filled dots
 are the charge left.
 
-WPM is only shown on the central, as the dot chart: one column per reading, 6 rows for
+WPM is only shown on the central, as the dot chart: one column per second, 6 rows for
 0–100 WPM, no number. Keys from both halves are processed there, so it already
-counts both. ZMK raises a WPM event only when the value changes, and each event adds a column
-to the chart.
+counts both. ZMK raises a WPM event only when the value changes, so the chart samples the WPM
+every second itself, empties 16 s after typing stops and then stops redrawing.
 
 Both branches render the same pixels. The GIFs were rendered by the real LVGL on the host.
 
