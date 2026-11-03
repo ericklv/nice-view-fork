@@ -35,6 +35,8 @@ Both branches render the same pixels. The GIFs were rendered by the real LVGL on
 |---|---|---|
 | `main` | `main` | 9 |
 | `v0.3` | `v0.3` | 8 |
+| `dongle-latest` | `main` | 9 |
+| `dongle-v.03` | `v0.3` | 8 |
 
 ## Usage
 
@@ -57,7 +59,7 @@ manifest:
     path: config
 ```
 
-Use `revision: v0.3` for both projects on ZMK v0.3.
+Use `revision: v0.3` for both projects on ZMK v0.3. For a dongle, see [Dongle](#dongle).
 
 `build.yaml`:
 
@@ -79,3 +81,37 @@ include:
 
 MIT, see [LICENSE](LICENSE). The embedded QuinqueFive font is by GGBotNet, under the
 SIL Open Font License 1.1, see [QuinqueFive_License.txt](QuinqueFive_License.txt).
+
+## Dongle
+
+With a dongle as the central, both halves are peripherals and use the peripheral screen: battery
+arc and connection to the dongle (`BLE`/`NULL`). Layer, output, profile and WPM live on the dongle,
+so the halves can't show them. The dongle has no screen and is built without `nice_view_fork`.
+
+Use these revisions of `nice-view-fork` in `config/west.yml`:
+
+| ZMK | `zmk` revision | `nice-view-fork` revision |
+|---|---|---|
+| latest | `main` | `dongle-latest` |
+| v0.3 | `v0.3` | `dongle-v.03` |
+
+Both halves:
+
+```ini
+CONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+```
+
+The left half also needs its label, as the default is `R` (for example in
+`config/<keyboard>_left.conf`):
+
+```ini
+CONFIG_NICE_VIEW_WIDGET_SIDE_LABEL="L"
+```
+
+The dongle:
+
+```ini
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS=2
+```
+
+When migrating, flash `settings_reset` on all three boards to clear the old pairings.

@@ -36,6 +36,10 @@ config NICE_VIEW_WIDGET_STATUS
 config NICE_VIEW_WIDGET_INVERTED
     bool "Invert custom status widget colors"
 
+config NICE_VIEW_WIDGET_SIDE_LABEL
+    string "Label shown on the peripheral battery arc"
+    default "R"
+
 if !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
 
 config NICE_VIEW_WIDGET_STATUS
