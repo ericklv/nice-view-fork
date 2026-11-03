@@ -22,7 +22,7 @@ static void draw(struct zmk_widget_screen *widget) {
         canvas_clear(&canvas);
 
         // Rows 60 to 134 are left free for a mascot
-        draw_battery_status(&canvas, "R", widget->state.battery);
+        draw_battery_status(&canvas, CONFIG_NICE_VIEW_WIDGET_SIDE_LABEL, widget->state.battery);
         draw_output_status(&canvas, &widget->state);
 
         canvas_rotate(&canvas);
